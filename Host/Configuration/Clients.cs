@@ -23,7 +23,7 @@ namespace Host.Configuration
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = {new Secret("CliEnt.ExpertsCoding.SecReT".Sha256()){Type="SharedSecret"}},
 
-                    AllowedScopes = { "ECApi" }
+                    AllowedScopes = { "ECApi", "AnotherApi" }
                 },
 
                 ///////////////////////////////////////////
