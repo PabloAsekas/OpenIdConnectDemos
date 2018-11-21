@@ -1,0 +1,84 @@
+@model Host.Advanced.Models.ManageViewModels.TwoFactorAuthenticationViewModel
+@{
+    ViewData["Title"] = "Two-factor authentication";
+    ViewData.AddActivePage(ManageNavPages.TwoFactorAuthentication);
+}
+
+<h4>@ViewData["Title"]</h4>
+@if (Model.Is2faEnabled)
+{
+    if (Model.RecoveryCodesLeft == 0)
+    {
+        <div class="alert alert-danger">
+            <strong>You have no recovery codes left.</strong>
+            <p>You must <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+        </div>
+    }
+    else if (Model.RecoveryCodesLeft == 1)
+    {
+        <div class="alert alert-danger">
+            <strong>You have 1 recovery code left.</strong>
+            <p>You can <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+        </div>
+    }
+    else if (Model.RecoveryCodesLeft <= 3)
+    {
+        <div class="alert alert-warning">
+            <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
+            <p>You should <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+        </div>
+    }
+
+    <a asp-action="Disable2faWarning" class="btn btn-default">Disable 2FA</a>
+    <a asp-action="GenerateRecoveryCodes" class="btn btn-default">Reset recovery codes</a>
+}
+
+<h5>U2F Devices</h5>
+<form asp-action="RemoveDevice" method="post">
+    <input type="hidden" id="deviceId" name="deviceId" value="-1"/>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Usage</th>
+            <th>Key Handle</th>
+            <th>Created On</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var device in Model.Devices)
+        {
+            <tr>
+                <td>
+                    <a href="#" data-js="remove-device" data-id="@device.Id">
+                        <i class="fa fa-trash-alt"></i>
+                    </a>
+                </td>
+                <td>@device.DeviceName</td>
+                <td>@device.Counter</td>
+                <td>@device.KeyHandle.Substring(0, 30)...</td>
+                <td>@device.CreatedOn.ToShortDateString()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</form>
+
+<a asp-action="RegisterU2F" class="btn btn-default">Register new U2F device</a>
+
+<h5>Authenticator app</h5>
+@if (!Model.HasAuthenticator)
+{
+    <a asp-action="EnableAuthenticator" class="btn btn-default">Add authenticator app</a>
+}
+else
+{
+    <a asp-action="EnableAuthenticator" class="btn btn-default">Configure authenticator app</a>
+    <a asp-action="ResetAuthenticatorWarning" class="btn btn-default">Reset authenticator key</a>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/TwoFactorAuthentication.js" asp-append-version="true"></script>
+}

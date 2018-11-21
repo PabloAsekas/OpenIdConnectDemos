@@ -1,0 +1,51 @@
+﻿@model Host.Advanced.Models.U2F.RegisterU2FViewModel
+@{
+    ViewData["Title"] = "Register U2F Device";
+    ViewData.AddActivePage(ManageNavPages.TwoFactorAuthentication);
+}
+
+<h4>@ViewData["Title"]</h4>
+<div>
+    <p>To register a U2F device plug in your device and touch the button</p>
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post" id="registerDevice">
+                <input type="hidden" asp-for="DeviceName"/>
+                <input type="hidden" asp-for="DeviceName"/>
+                <input type="text" id="AppId" asp-for="AppId" class="form-control" readonly="readonly"/>
+                <input type="text" id="Version" asp-for="Version" class="form-control" readonly="readonly"/>
+                <input type="text" id="Challenge" asp-for="Challenge" class="form-control" readonly="readonly"/>
+                <input type="text" asp-for="DeviceResponse" class="form-control"/>
+                <button type="submit" class="btn btn-default">Verify</button>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="promptModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h3 id="myModalLabel">Performing U2F action</h3>
+            </div>
+            <div class="modal-body">
+                <p>You may be prompted to allow the site permission to access your security keys. After granting permission, the device will start to blink.</p>
+            </div>
+            <div class="modal-body">
+                <p>Before touch the key assign a name to this device</p>
+                <input type="text" id="modalDeviceName" class="form-control"/>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-default" href="javascript:history.back()">Abort</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/js/u2f-api.js"></script>
+    <script  src="~/js/RegisterU2f.js"></script>
+}

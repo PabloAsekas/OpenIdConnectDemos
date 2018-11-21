@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Authorize page";
+}
+
+<div>
+    This is an authorized page.<br/>
+    Your info:
+    <ul>
+        @foreach (var claim in User.Claims)
+        {
+            @Html.Raw($"<li>{claim.Type}: {claim.Value}")
+        }
+    </ul>
+</div>
